@@ -71,7 +71,13 @@ void Board::paintCell(QPainter& painter, int row, int col, const Cell& cell)
 {
     auto rect = getCellRect(row, col);
 
-    // draw cell number (if set)
+    // highlight cell
+    if (cell.isSelected())
+    {
+        painter.fillRect(rect, Yellow);
+    }
+
+    // draw cell number
     if (cell.value() >= 0)
     {
         painter.setFont(m_font_number);
