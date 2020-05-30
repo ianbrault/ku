@@ -29,6 +29,7 @@ Board::Board(QWidget *parent)
     }
 
     setFixedSize(BoardSize, BoardSize);
+    grabKeyboard();
 }
 
 Board::~Board() {}
@@ -66,6 +67,20 @@ int Board::getCellFromPos(int pos) const
         return (pos - (3 * LineMajorWidth)) / CellSize;
 
     return -1;
+}
+
+void Board::keyPressEvent(QKeyEvent* event)
+{
+    auto key = event->key();
+    if (key >= Qt::Key_0 && key <= Qt::Key_9)
+    {
+        if (m_cell_selected >= 0)
+        {
+            auto num = key - Qt::Key_0;
+            m_cells[m_cell_selected].setValue(num);
+            repaint();
+        }
+    }
 }
 
 void Board::mousePressEvent(QMouseEvent* event)

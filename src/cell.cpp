@@ -22,6 +22,11 @@ bool Cell::isSelected() const
     return m_selected;
 }
 
+void Cell::setValue(char value)
+{
+    m_value = value;
+}
+
 void Cell::toggleSelect()
 {
     m_selected = !m_selected;

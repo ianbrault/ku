@@ -27,6 +27,7 @@ public:
     ~Board();
 
 protected:
+    void keyPressEvent(QKeyEvent*) override;
     void mousePressEvent(QMouseEvent*) override;
     void paintEvent(QPaintEvent*) override;
 

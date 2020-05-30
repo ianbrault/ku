@@ -10,6 +10,7 @@ public:
     char value() const;
     bool isSelected() const;
 
+    void setValue(char);
     void toggleSelect();
 
 private:
