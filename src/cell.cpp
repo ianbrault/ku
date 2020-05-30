@@ -4,18 +4,20 @@
 
 #include "cell.h"
 
-#include <QLabel>
-#include <QVBoxLayout>
-
-Cell::Cell(int row, int col, QWidget *parent)
-    : QWidget(parent), m_row(row), m_col(col)
+Cell::Cell()
+    : m_value(-1), m_selected(false)
 {
-    auto layout = new QVBoxLayout();
-    layout->addWidget(new QLabel("0"));
-    layout->setAlignment(Qt::AlignCenter);
-    setLayout(layout);
 
-    setStyleSheet("font-size: 24px");
 }
 
 Cell::~Cell() {}
+
+char Cell::value() const
+{
+    return m_value;
+}
+
+bool Cell::isSelected() const
+{
+    return m_selected;
+}

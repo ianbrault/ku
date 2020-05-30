@@ -1,22 +1,18 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include <QWidget>
-
-class Cell : public QWidget
+class Cell
 {
-    Q_OBJECT
-
 public:
-    Cell(int row, int col, QWidget* parent = nullptr);
+    Cell();
     ~Cell();
 
-private:
-    void setBorders();
+    char value() const;
+    bool isSelected() const;
 
 private:
-    int m_row;
-    int m_col;
+    char m_value;
+    bool m_selected;
 };
 
 #endif // CELL_H
