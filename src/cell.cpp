@@ -21,3 +21,8 @@ bool Cell::isSelected() const
 {
     return m_selected;
 }
+
+void Cell::toggleSelect()
+{
+    m_selected = !m_selected;
+}

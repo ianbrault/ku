@@ -27,18 +27,23 @@ public:
     ~Board();
 
 protected:
+    void mousePressEvent(QMouseEvent*) override;
     void paintEvent(QPaintEvent*) override;
 
 private:
+    void  selectCell(int, int);
+
+    QRect getCellRect(int, int) const;
+    int   getCellFromPos(int) const;
+
     void paintGridLines(QPainter&);
     void paintCell(QPainter&, int, int, const Cell&);
     void paintCells(QPainter&);
 
-    QRect getCellRect(int, int) const;
-
 private:
-    std::array<Cell, 81> m_cells;
     std::array<int,  9>  m_cell_offsets;
+    std::array<Cell, 81> m_cells;
+    int m_cell_selected;
 
     QPen m_pen_min;
     QPen m_pen_maj;

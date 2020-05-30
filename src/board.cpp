@@ -5,10 +5,11 @@
 #include "board.h"
 #include "palette.h"
 
+#include <QMouseEvent>
 #include <QPainter>
 
 Board::Board(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent), m_cell_selected(-1)
 {
     m_pen_min = QPen(QBrush(Black), LineMinorWidth);
     m_pen_maj = QPen(QBrush(Black), LineMajorWidth);
@@ -31,6 +32,64 @@ Board::Board(QWidget *parent)
 }
 
 Board::~Board() {}
+
+void Board::selectCell(int row, int col)
+{
+    auto target = (row * 9) + col;
+    m_cells[target].toggleSelect();
+
+    if (target == m_cell_selected)
+    {
+        m_cell_selected = -1;
+    }
+    else
+    {
+        if (m_cell_selected > 0)
+            m_cells[m_cell_selected].toggleSelect();
+        m_cell_selected = target;
+    }
+}
+
+QRect Board::getCellRect(int row, int col) const
+{
+    return QRect(m_cell_offsets[col], m_cell_offsets[row], CellSize, CellSize);
+}
+
+int Board::getCellFromPos(int pos) const
+{
+    // check by thirds
+    if (pos >= m_cell_offsets[0] && pos <= m_cell_offsets[2] + CellSize)
+        return (pos - LineMajorWidth) / CellSize;
+    else if (pos >= m_cell_offsets[3] && pos <= m_cell_offsets[5] + CellSize)
+        return (pos - (2 * LineMajorWidth)) / CellSize;
+    else if (pos >= m_cell_offsets[6] && pos <= m_cell_offsets[8] + CellSize)
+        return (pos - (3 * LineMajorWidth)) / CellSize;
+
+    return -1;
+}
+
+void Board::mousePressEvent(QMouseEvent* event)
+{
+    auto pos = event->localPos();
+
+    int row = getCellFromPos(pos.y());
+    int col = getCellFromPos(pos.x());
+    if (row >= 0 && col >= 0)
+    {
+        selectCell(row, col);
+        repaint();
+    }
+}
+
+void Board::paintEvent(QPaintEvent*)
+{
+    QPainter painter(this);
+    // blank the whole board
+    painter.fillRect(0, 0, BoardSize, BoardSize, White);
+
+    paintCells(painter);
+    paintGridLines(painter);
+}
 
 void Board::paintGridLines(QPainter& painter)
 {
@@ -62,11 +121,6 @@ void Board::paintGridLines(QPainter& painter)
     painter.drawLine(BoardSize, LineMajorOffset, 0, LineMajorOffset);
 }
 
-QRect Board::getCellRect(int row, int col) const
-{
-    return QRect(m_cell_offsets[row], m_cell_offsets[col], CellSize, CellSize);
-}
-
 void Board::paintCell(QPainter& painter, int row, int col, const Cell& cell)
 {
     auto rect = getCellRect(row, col);
@@ -94,11 +148,4 @@ void Board::paintCells(QPainter& painter)
             paintCell(painter, row, col, m_cells[(row * 9) + col]);
         }
     }
-}
-
-void Board::paintEvent(QPaintEvent*)
-{
-    QPainter painter(this);
-    paintCells(painter);
-    paintGridLines(painter);
 }
