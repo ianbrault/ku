@@ -33,13 +33,14 @@ protected:
 
 private:
     void  selectCell(int, int);
+    void  moveSelection(int);
 
     QRect getCellRect(int, int) const;
     int   getCellFromPos(int) const;
 
-    void paintGridLines(QPainter&);
-    void paintCell(QPainter&, int, int, const Cell&);
-    void paintCells(QPainter&);
+    void  paintGridLines(QPainter&);
+    void  paintCell(QPainter&, int, int, const Cell&);
+    void  paintCells(QPainter&);
 
 private:
     std::array<int,  9>  m_cell_offsets;

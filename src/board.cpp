@@ -5,6 +5,7 @@
 #include "board.h"
 #include "palette.h"
 
+#include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
 
@@ -51,6 +52,39 @@ void Board::selectCell(int row, int col)
     }
 }
 
+void Board::moveSelection(int key)
+{
+    if (m_cell_selected < 0)
+        return;
+
+    auto row = m_cell_selected / 9;
+    auto col = m_cell_selected % 9;
+    auto newRow = row;
+    auto newCol = col;
+
+    switch (key)
+    {
+    case Qt::Key_Up: case Qt::Key_K:
+        newRow = (row > 0) ? row - 1 : row;
+        break;
+    case Qt::Key_Down: case Qt::Key_J:
+        newRow = (row < 8) ? row + 1 : row;
+        break;
+    case Qt::Key_Left: case Qt::Key_H:
+        newCol = (col > 0) ? col - 1 : col;
+        break;
+    case Qt::Key_Right: case Qt::Key_L:
+        newCol = (col < 8) ? col + 1 : col;
+        break;
+    };
+
+    if (newRow != row || newCol != col)
+    {
+        selectCell(newRow, newCol);
+        repaint();
+    }
+}
+
 QRect Board::getCellRect(int row, int col) const
 {
     return QRect(m_cell_offsets[col], m_cell_offsets[row], CellSize, CellSize);
@@ -69,9 +103,22 @@ int Board::getCellFromPos(int pos) const
     return -1;
 }
 
+static bool isNavigationKey(int key)
+{
+    return (key == Qt::Key_Up ||
+            key == Qt::Key_Down ||
+            key == Qt::Key_Left ||
+            key == Qt::Key_Right ||
+            key == Qt::Key_H ||
+            key == Qt::Key_J ||
+            key == Qt::Key_K ||
+            key == Qt::Key_L);
+}
+
 void Board::keyPressEvent(QKeyEvent* event)
 {
     auto key = event->key();
+
     if (key >= Qt::Key_0 && key <= Qt::Key_9)
     {
         if (m_cell_selected >= 0)
@@ -80,6 +127,10 @@ void Board::keyPressEvent(QKeyEvent* event)
             m_cells[m_cell_selected].setValue(num);
             repaint();
         }
+    }
+    else if (isNavigationKey(key))
+    {
+        moveSelection(key);
     }
 }
 
