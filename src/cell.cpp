@@ -5,7 +5,7 @@
 #include "cell.h"
 
 Cell::Cell()
-    : m_value(-1), m_selected(false)
+    : m_value(-1), m_selected(false), m_given(false)
 {
 
 }
@@ -22,6 +22,11 @@ bool Cell::isSelected() const
     return m_selected;
 }
 
+bool Cell::isGiven() const
+{
+    return m_given;
+}
+
 void Cell::setValue(char value)
 {
     m_value = value;
@@ -30,4 +35,9 @@ void Cell::setValue(char value)
 void Cell::toggleSelect()
 {
     m_selected = !m_selected;
+}
+
+void Cell::setGiven(bool given)
+{
+    m_given = given;
 }

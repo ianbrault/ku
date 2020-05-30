@@ -34,6 +34,7 @@ protected:
 private:
     void  selectCell(int, int);
     void  moveSelection(int);
+    void  setSelectedCellValue(int);
 
     QRect getCellRect(int, int) const;
     int   getCellFromPos(int) const;

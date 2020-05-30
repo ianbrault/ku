@@ -46,7 +46,7 @@ void Board::selectCell(int row, int col)
     }
     else
     {
-        if (m_cell_selected > 0)
+        if (m_cell_selected >= 0)
             m_cells[m_cell_selected].toggleSelect();
         m_cell_selected = target;
     }
@@ -83,6 +83,12 @@ void Board::moveSelection(int key)
         selectCell(newRow, newCol);
         repaint();
     }
+}
+
+void Board::setSelectedCellValue(int value)
+{
+    if (m_cell_selected >= 0 && !m_cells[m_cell_selected].isGiven())
+        m_cells[m_cell_selected].setValue(value);
 }
 
 QRect Board::getCellRect(int row, int col) const
@@ -124,8 +130,7 @@ void Board::keyPressEvent(QKeyEvent* event)
         if (m_cell_selected >= 0)
         {
             auto num = key - Qt::Key_0;
-            m_cells[m_cell_selected].setValue(num);
-            repaint();
+            setSelectedCellValue(num);
         }
     }
     else if (isNavigationKey(key))
@@ -193,9 +198,9 @@ void Board::paintCell(QPainter& painter, int row, int col, const Cell& cell)
 
     // highlight cell
     if (cell.isSelected())
-    {
         painter.fillRect(rect, Yellow);
-    }
+    else if (cell.isGiven())
+        painter.fillRect(rect, LightGray);
 
     // draw cell number
     if (cell.value() >= 0)

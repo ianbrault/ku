@@ -9,13 +9,16 @@ public:
 
     char value() const;
     bool isSelected() const;
+    bool isGiven() const;
 
     void setValue(char);
     void toggleSelect();
+    void setGiven(bool);
 
 private:
     char m_value;
     bool m_selected;
+    bool m_given;
 };
 
 #endif // CELL_H
