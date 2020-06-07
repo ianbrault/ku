@@ -40,12 +40,11 @@ protected:
     void paintEvent(QPaintEvent*) override;
 
 private:
-    void  selectCell(int, int);
-    void  moveSelection(int);
-    void  setSelectedCellValue(int);
-
-    int   getCellFromPos(int) const;
-
+    void reset(bool withRepaint = true);
+    void selectCell(int, int);
+    void moveSelection(int);
+    void setSelectedCellValue(int);
+    int  getCellFromPos(int) const;
     void puzzleLoadError(QString&&);
 
 private:

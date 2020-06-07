@@ -48,6 +48,17 @@ int Board::cellOffset(int cn) const
     return m_cell_offsets[cn];
 }
 
+void Board::reset(bool withRepaint)
+{
+    // clear all cells and selection
+    for (auto& cell : m_cells)
+        cell.clear();
+    m_cell_selected = -1;
+
+    if (withRepaint)
+        repaint();
+}
+
 void Board::puzzleLoadError(QString&& msg)
 {
     // show a dialog box with the error message
@@ -65,16 +76,14 @@ void Board::puzzleLoadError(QString&& msg)
     popup.setStyleSheet("QLabel { min-width: 280px; }");
     popup.exec();
 
-    // clear all cells and selection
-    for (auto& cell : m_cells)
-        cell.clear();
-    m_cell_selected = -1;
-
-    repaint();
+    reset();
 }
 
 void Board::loadPuzzleFromFile(QString&& filePath)
 {
+    // reset board before loading
+    reset();
+
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
