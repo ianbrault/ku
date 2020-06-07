@@ -3,25 +3,18 @@
 */
 
 #include "board.h"
+#include "board_painter.h"
 #include "palette.h"
 
 #include <cctype>
 
-#include <QDebug>
 #include <QMessageBox>
 #include <QMouseEvent>
-#include <QPainter>
+#include <QTextStream>
 
 Board::Board(QWidget *parent)
     : QWidget(parent), m_cell_selected(-1)
 {
-    m_pen_min = QPen(QBrush(Black), LineMinorWidth);
-    m_pen_maj = QPen(QBrush(Black), LineMajorWidth);
-    m_pen_text = QPen(Blue);
-    m_pen_text_given = QPen(Black);
-
-    m_font_number.setPixelSize(NumberSize);
-
     // calculate cell offsets
     auto offset = [](int i, int j) {
         return (i * LineMajorWidth) + (j * CellSize);
@@ -39,6 +32,21 @@ Board::Board(QWidget *parent)
 }
 
 Board::~Board() {}
+
+const Cell& Board::cell(int row, int col) const
+{
+    return m_cells[(row * 9) + col];
+}
+
+QRect Board::cellRect(int row, int col) const
+{
+    return QRect(m_cell_offsets[col], m_cell_offsets[row], CellSize, CellSize);
+}
+
+int Board::cellOffset(int cn) const
+{
+    return m_cell_offsets[cn];
+}
 
 void Board::puzzleLoadError(QString&& msg)
 {
@@ -173,11 +181,6 @@ void Board::setSelectedCellValue(int value)
     }
 }
 
-QRect Board::getCellRect(int row, int col) const
-{
-    return QRect(m_cell_offsets[col], m_cell_offsets[row], CellSize, CellSize);
-}
-
 int Board::getCellFromPos(int pos) const
 {
     // check by thirds
@@ -234,70 +237,8 @@ void Board::mousePressEvent(QMouseEvent* event)
     }
 }
 
-void Board::paintEvent(QPaintEvent*)
+void Board::paintEvent(QPaintEvent* event)
 {
-    QPainter painter(this);
-    // blank the whole board
-    painter.fillRect(0, 0, BoardSize, BoardSize, White);
-
-    paintCells(painter);
-    paintGridLines(painter);
-}
-
-void Board::paintGridLines(QPainter& painter)
-{
-    // draw the minor lines
-    painter.setPen(m_pen_min);
-
-    for (auto i = 1; i < 9; i += 3)
-    {
-        painter.drawLine(m_cell_offsets[i],     0, m_cell_offsets[i],     BoardSize);
-        painter.drawLine(m_cell_offsets[i + 1], 0, m_cell_offsets[i + 1], BoardSize);
-        painter.drawLine(0, m_cell_offsets[i],     BoardSize, m_cell_offsets[i]);
-        painter.drawLine(0, m_cell_offsets[i + 1], BoardSize, m_cell_offsets[i + 1]);
-    }
-
-    // draw the inside major lines
-    painter.setPen(m_pen_maj);
-
-    for (auto i = 0; i < 9; i += 3)
-    {
-        auto p = m_cell_offsets[i] - LineMajorOffset;
-        painter.drawLine(p, 0, p, BoardSize);
-        painter.drawLine(0, p, BoardSize, p);
-    }
-
-    // draw the outside major lines (counter-clockwise)
-    painter.drawLine(LineMajorOffset, 0, LineMajorOffset, BoardSize);
-    painter.drawLine(0, BoardSize - LineMajorOffset, BoardSize, BoardSize - LineMajorOffset);
-    painter.drawLine(BoardSize - LineMajorOffset, BoardSize, BoardSize - LineMajorOffset, 0);
-    painter.drawLine(BoardSize, LineMajorOffset, 0, LineMajorOffset);
-}
-
-void Board::paintCell(QPainter& painter, int row, int col, const Cell& cell)
-{
-    auto rect = getCellRect(row, col);
-
-    // highlight cell
-    if (cell.isSelected())
-        painter.fillRect(rect, Yellow);
-
-    // draw cell number
-    if (cell.value() >= 0)
-    {
-        painter.setFont(m_font_number);
-        painter.setPen(cell.isGiven() ? m_pen_text_given : m_pen_text);
-        painter.drawText(rect, Qt::AlignCenter, QString::number(cell.value()));
-    }
-}
-
-void Board::paintCells(QPainter& painter)
-{
-    for (auto row = 0; row < 9; row++)
-    {
-        for (auto col = 0; col < 9; col++)
-        {
-            paintCell(painter, row, col, m_cells[(row * 9) + col]);
-        }
-    }
+    BoardPainter painter(this);
+    painter.paint(event);
 }

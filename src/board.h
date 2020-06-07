@@ -13,20 +13,26 @@ class Board : public QWidget
 {
     Q_OBJECT
 
+public:
     // board dimension definitions
-    static const auto LineMinorWidth = 1;
-    static const auto LineMajorWidth = 4;
-    static const auto LineMajorOffset = LineMajorWidth / 2;
-    static const auto CellSize = 72;
-    static const auto BoardSize = (LineMajorWidth * 4) + (CellSize * 9);
-
-    static const auto NumberSize = 40;
+    enum Size {
+        LineMinorWidth  = 1,
+        LineMajorWidth  = 4,
+        LineMajorOffset = LineMajorWidth / 2,
+        CellSize        = 72,
+        BoardSize       = (LineMajorWidth * 4) + (CellSize * 9),
+        NumberSize      = 40,
+    };
+    Q_ENUM(Size);
 
 public:
     Board(QWidget* parent = nullptr);
     ~Board();
 
-    void loadPuzzleFromFile(QString&& filePath);
+    const Cell& cell(int, int) const;
+    QRect cellRect(int, int) const;
+    int   cellOffset(int) const;
+    void  loadPuzzleFromFile(QString&& filePath);
 
 protected:
     void keyPressEvent(QKeyEvent*) override;
@@ -38,12 +44,7 @@ private:
     void  moveSelection(int);
     void  setSelectedCellValue(int);
 
-    QRect getCellRect(int, int) const;
     int   getCellFromPos(int) const;
-
-    void  paintGridLines(QPainter&);
-    void  paintCell(QPainter&, int, int, const Cell&);
-    void  paintCells(QPainter&);
 
     void puzzleLoadError(QString&&);
 
@@ -51,13 +52,6 @@ private:
     std::array<int,  9>  m_cell_offsets;
     std::array<Cell, 81> m_cells;
     int m_cell_selected;
-
-    QPen m_pen_min;
-    QPen m_pen_maj;
-    QPen m_pen_text;
-    QPen m_pen_text_given;
-
-    QFont m_font_number;
 };
 
 #endif // BOARD_H
