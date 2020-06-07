@@ -13,6 +13,8 @@ public:
     MainView(QWidget* parent = nullptr);
     ~MainView();
 
+    void loadPuzzleFromFile(QString&& filePath);
+
 private:
     Board* m_board;
 };

@@ -27,6 +27,13 @@ bool Cell::isGiven() const
     return m_given;
 }
 
+void Cell::clear()
+{
+    m_value = -1;
+    m_selected = false;
+    m_given = false;
+}
+
 void Cell::setValue(char value)
 {
     m_value = value;

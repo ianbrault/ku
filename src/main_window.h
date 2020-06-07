@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+class MainView;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -10,6 +12,13 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
+
+private:
+    void setupMenuBar();
+    void openPuzzleFileDialog();
+
+private:
+    MainView* m_view;
 };
 
 #endif // MAIN_WINDOW_H

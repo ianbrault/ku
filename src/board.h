@@ -26,6 +26,8 @@ public:
     Board(QWidget* parent = nullptr);
     ~Board();
 
+    void loadPuzzleFromFile(QString&& filePath);
+
 protected:
     void keyPressEvent(QKeyEvent*) override;
     void mousePressEvent(QMouseEvent*) override;
@@ -42,6 +44,8 @@ private:
     void  paintGridLines(QPainter&);
     void  paintCell(QPainter&, int, int, const Cell&);
     void  paintCells(QPainter&);
+
+    void puzzleLoadError(QString&&);
 
 private:
     std::array<int,  9>  m_cell_offsets;

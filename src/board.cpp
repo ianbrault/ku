@@ -5,7 +5,10 @@
 #include "board.h"
 #include "palette.h"
 
+#include <cctype>
+
 #include <QDebug>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 
@@ -34,6 +37,80 @@ Board::Board(QWidget *parent)
 }
 
 Board::~Board() {}
+
+void Board::puzzleLoadError(QString&& msg)
+{
+    // show a dialog box with the error message
+    QMessageBox popup;
+
+    popup.setText("Could not load the puzzle");
+    popup.setInformativeText(
+        QString("%1\n\nPuzzles should be specified in row-major order (with "
+                "columns left-to-right, rows  top-to-bottom. All whitespace "
+                "is ignored.\n")
+                .arg(msg));
+
+    popup.setStandardButtons(QMessageBox::Close);
+    popup.setDefaultButton(QMessageBox::Close);
+    popup.setStyleSheet("QLabel { min-width: 280px; }");
+    popup.exec();
+
+    // clear all cells and selection
+    for (auto& cell : m_cells)
+        cell.clear();
+    m_cell_selected = -1;
+
+    repaint();
+}
+
+void Board::loadPuzzleFromFile(QString&& filePath)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        puzzleLoadError("Could not open the puzzle file for reading");
+        return;
+    }
+
+    QTextStream stream(&file);
+    auto cell = 0;
+
+    while (!stream.atEnd())
+    {
+        QString line = stream.readLine();
+        for (const auto& c : line)
+        {
+            // check for an overspecified puzzle
+            if (cell == 81)
+            {
+                puzzleLoadError("The puzzle file contains too many cells");
+                return;
+            }
+
+            // ignore whitespace
+            if (c.isSpace())
+                continue;
+            // "." indicates an empty cell
+            else if (c == '.')
+                cell++;
+            else if (c.isDigit())
+            {
+                m_cells[cell].setValue(c.digitValue());
+                m_cells[cell].setGiven(true);
+                cell++;
+            }
+            else
+            {
+                // illegal character
+                puzzleLoadError(QString("The puzzle file contains an invalid character: \"%1\"").arg(c));
+                return;
+            }
+        }
+    }
+
+    // underspecified puzzles are okay, assume the remaining cells are empty
+    repaint();
+}
 
 void Board::selectCell(int row, int col)
 {
@@ -88,7 +165,10 @@ void Board::moveSelection(int key)
 void Board::setSelectedCellValue(int value)
 {
     if (m_cell_selected >= 0 && !m_cells[m_cell_selected].isGiven())
+    {
         m_cells[m_cell_selected].setValue(value);
+        repaint();
+    }
 }
 
 QRect Board::getCellRect(int row, int col) const

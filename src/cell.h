@@ -11,6 +11,7 @@ public:
     bool isSelected() const;
     bool isGiven() const;
 
+    void clear();
     void setValue(char);
     void toggleSelect();
     void setGiven(bool);
