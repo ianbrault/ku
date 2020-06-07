@@ -54,6 +54,8 @@ private:
 
     QPen m_pen_min;
     QPen m_pen_maj;
+    QPen m_pen_text;
+    QPen m_pen_text_given;
 
     QFont m_font_number;
 };

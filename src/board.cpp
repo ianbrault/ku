@@ -17,6 +17,8 @@ Board::Board(QWidget *parent)
 {
     m_pen_min = QPen(QBrush(Black), LineMinorWidth);
     m_pen_maj = QPen(QBrush(Black), LineMajorWidth);
+    m_pen_text = QPen(Blue);
+    m_pen_text_given = QPen(Black);
 
     m_font_number.setPixelSize(NumberSize);
 
@@ -279,13 +281,12 @@ void Board::paintCell(QPainter& painter, int row, int col, const Cell& cell)
     // highlight cell
     if (cell.isSelected())
         painter.fillRect(rect, Yellow);
-    else if (cell.isGiven())
-        painter.fillRect(rect, LightGray);
 
     // draw cell number
     if (cell.value() >= 0)
     {
         painter.setFont(m_font_number);
+        painter.setPen(cell.isGiven() ? m_pen_text_given : m_pen_text);
         painter.drawText(rect, Qt::AlignCenter, QString::number(cell.value()));
     }
 }
