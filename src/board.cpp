@@ -3,6 +3,7 @@
 */
 
 #include "board.h"
+#include "board_geometry.h"
 #include "board_painter.h"
 #include "palette.h"
 
@@ -13,39 +14,28 @@
 #include <QTextStream>
 
 Board::Board(QWidget *parent)
-    : QWidget(parent), m_cell_selected(-1)
+    : QWidget(parent), m_mode(Normal), m_cell_selected(-1)
 {
-    // calculate cell offsets
-    auto offset = [](int i, int j) {
-        return (i * LineMajorWidth) + (j * CellSize);
-    };
+    // FIXME: this should share the same instance with the BoardPainter
+    m_geo = new BoardGeometry();
 
-    for (auto i = 0; i < 3; i++)
-    {
-        m_cell_offsets[(i * 3)]     = offset(i + 1, (i * 3));
-        m_cell_offsets[(i * 3) + 1] = offset(i + 1, (i * 3) + 1);
-        m_cell_offsets[(i * 3) + 2] = offset(i + 1, (i * 3) + 2);
-    }
-
-    setFixedSize(BoardSize, BoardSize);
+    setFixedSize(m_geo->boardSize());
     grabKeyboard();
 }
 
-Board::~Board() {}
+Board::~Board()
+{
+    delete m_geo;
+}
+
+void Board::setInputMode(InputMode mode)
+{
+    m_mode = mode;
+}
 
 const Cell& Board::cell(int row, int col) const
 {
     return m_cells[(row * 9) + col];
-}
-
-QRect Board::cellRect(int row, int col) const
-{
-    return QRect(m_cell_offsets[col], m_cell_offsets[row], CellSize, CellSize);
-}
-
-int Board::cellOffset(int cn) const
-{
-    return m_cell_offsets[cn];
 }
 
 void Board::reset(bool withRepaint)
@@ -148,7 +138,7 @@ void Board::selectCell(int row, int col)
     }
 }
 
-void Board::moveSelection(int key)
+void Board::moveSelection(Direction dir)
 {
     if (m_cell_selected < 0)
         return;
@@ -158,18 +148,20 @@ void Board::moveSelection(int key)
     auto newRow = row;
     auto newCol = col;
 
-    switch (key)
+    switch (dir)
     {
-    case Qt::Key_Up: case Qt::Key_K:
+    case None:
+        break;
+    case Up:
         newRow = (row > 0) ? row - 1 : row;
         break;
-    case Qt::Key_Down: case Qt::Key_J:
+    case Down:
         newRow = (row < 8) ? row + 1 : row;
         break;
-    case Qt::Key_Left: case Qt::Key_H:
+    case Left:
         newCol = (col > 0) ? col - 1 : col;
         break;
-    case Qt::Key_Right: case Qt::Key_L:
+    case Right:
         newCol = (col < 8) ? col + 1 : col;
         break;
     };
@@ -181,26 +173,13 @@ void Board::moveSelection(int key)
     }
 }
 
-void Board::setSelectedCellValue(int value)
+void Board::setSelectedCellValue(int8_t value)
 {
     if (m_cell_selected >= 0 && !m_cells[m_cell_selected].isGiven())
     {
         m_cells[m_cell_selected].setValue(value);
         repaint();
     }
-}
-
-int Board::getCellFromPos(int pos) const
-{
-    // check by thirds
-    if (pos >= m_cell_offsets[0] && pos <= m_cell_offsets[2] + CellSize)
-        return (pos - LineMajorWidth) / CellSize;
-    else if (pos >= m_cell_offsets[3] && pos <= m_cell_offsets[5] + CellSize)
-        return (pos - (2 * LineMajorWidth)) / CellSize;
-    else if (pos >= m_cell_offsets[6] && pos <= m_cell_offsets[8] + CellSize)
-        return (pos - (3 * LineMajorWidth)) / CellSize;
-
-    return -1;
 }
 
 static bool isNavigationKey(int key)
@@ -215,30 +194,40 @@ static bool isNavigationKey(int key)
             key == Qt::Key_L);
 }
 
+Board::Direction Board::keyToDirection(int key)
+{
+    auto dir = None;
+
+    if (key == Qt::Key_Up || key == Qt::Key_K)
+        dir = Up;
+    else if (key == Qt::Key_Down || key == Qt::Key_J)
+        dir = Down;
+    else if (key == Qt::Key_Left || key == Qt::Key_H)
+        dir = Left;
+    else if (key == Qt::Key_Right || key == Qt::Key_L)
+        dir = Right;
+
+    return dir;
+}
+
 void Board::keyPressEvent(QKeyEvent* event)
 {
     auto key = event->key();
 
     if (key >= Qt::Key_0 && key <= Qt::Key_9)
-    {
-        if (m_cell_selected >= 0)
-        {
-            auto num = key - Qt::Key_0;
-            setSelectedCellValue(num);
-        }
-    }
+        setSelectedCellValue(key - Qt::Key_0);
     else if (isNavigationKey(key))
-    {
-        moveSelection(key);
-    }
+        moveSelection(keyToDirection(key));
+
+    // FIXME: add backspace handling
 }
 
 void Board::mousePressEvent(QMouseEvent* event)
 {
     auto pos = event->localPos();
 
-    int row = getCellFromPos(pos.y());
-    int col = getCellFromPos(pos.x());
+    int row = m_geo->getCellFromPos(pos.y());
+    int col = m_geo->getCellFromPos(pos.x());
     if (row >= 0 && col >= 0)
     {
         selectCell(row, col);

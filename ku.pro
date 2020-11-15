@@ -6,6 +6,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
     src/board.h \
+    src/board_geometry.h \
     src/board_painter.h \
     src/cell.h \
     src/main_view.h \
@@ -14,6 +15,7 @@ HEADERS += \
 
 SOURCES += \
     src/board.cpp \
+    src/board_geometry.cpp \
     src/board_painter.cpp \
     src/cell.cpp \
     src/main.cpp \

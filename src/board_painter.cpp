@@ -3,14 +3,18 @@
 */
 
 #include "board.h"
+#include "board_geometry.h"
 #include "board_painter.h"
 #include "palette.h"
 
-typedef Board::Size Size;
+typedef BoardGeometry::Size Size;
 
 BoardPainter::BoardPainter(Board* board)
     : QPainter((QPaintDevice*) board)
 {
+    // FIXME: this should share the same instance with the Board
+    m_geo = new BoardGeometry();
+
     m_pen_line_min = QPen(QBrush(Black), Size::LineMinorWidth);
     m_pen_line_maj = QPen(QBrush(Black), Size::LineMajorWidth);
 
@@ -33,17 +37,15 @@ void BoardPainter::paint(QPaintEvent*)
 
 void BoardPainter::paintGridLines()
 {
-    auto board = (Board*) device();
-
     // draw the minor lines
     setPen(m_pen_line_min);
 
     for (auto i = 1; i < 9; i += 3)
     {
-        drawLine(board->cellOffset(i),   0, board->cellOffset(i),   Size::BoardSize);
-        drawLine(board->cellOffset(i+1), 0, board->cellOffset(i+1), Size::BoardSize);
-        drawLine(0, board->cellOffset(i),   Size::BoardSize, board->cellOffset(i));
-        drawLine(0, board->cellOffset(i+1), Size::BoardSize, board->cellOffset(i+1));
+        drawLine(m_geo->cellOffset(i),   0, m_geo->cellOffset(i),   Size::BoardSize);
+        drawLine(m_geo->cellOffset(i+1), 0, m_geo->cellOffset(i+1), Size::BoardSize);
+        drawLine(0, m_geo->cellOffset(i),   Size::BoardSize, m_geo->cellOffset(i));
+        drawLine(0, m_geo->cellOffset(i+1), Size::BoardSize, m_geo->cellOffset(i+1));
     }
 
     // draw the inside major lines
@@ -51,7 +53,7 @@ void BoardPainter::paintGridLines()
 
     for (auto i = 0; i < 9; i += 3)
     {
-        auto p = board->cellOffset(i) - Size::LineMajorOffset;
+        auto p = m_geo->cellOffset(i) - Size::LineMajorOffset;
         drawLine(p, 0, p, Size::BoardSize);
         drawLine(0, p, Size::BoardSize, p);
     }
@@ -65,8 +67,7 @@ void BoardPainter::paintGridLines()
 
 void BoardPainter::paintCell(int row, int col, const Cell& cell)
 {
-    auto board = (Board*) device();
-    auto rect = board->cellRect(row, col);
+    auto rect = m_geo->cellRect(row, col);
 
     // highlight cell
     if (cell.isSelected())

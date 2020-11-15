@@ -8,6 +8,7 @@
 #include <QPainter>
 
 class Board;
+class BoardGeometry;
 class QPaintEvent;
 
 class BoardPainter : public QPainter
@@ -24,6 +25,8 @@ private:
     void paintCells();
 
 private:
+    BoardGeometry* m_geo;
+
     QPen m_pen_line_min;
     QPen m_pen_line_maj;
 

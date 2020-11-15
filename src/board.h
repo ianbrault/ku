@@ -9,32 +9,40 @@
 #include <QPen>
 #include <QWidget>
 
+class BoardGeometry;
+
 class Board : public QWidget
 {
     Q_OBJECT
 
 public:
-    // board dimension definitions
-    enum Size {
-        LineMinorWidth  = 1,
-        LineMajorWidth  = 4,
-        LineMajorOffset = LineMajorWidth / 2,
-        CellSize        = 72,
-        BoardSize       = (LineMajorWidth * 4) + (CellSize * 9),
-        NumberSize      = 40,
+    enum InputMode {
+        Normal,
+        Corner,
+        Center,
     };
-    Q_ENUM(Size);
+    Q_ENUM(InputMode);
+
+    enum Direction {
+        None,
+        Up,
+        Down,
+        Left,
+        Right,
+    };
+    Q_ENUM(Direction);
+    Direction keyToDirection(int);
 
 public:
     Board(QWidget* parent = nullptr);
     ~Board();
 
+    void setInputMode(InputMode);
     const Cell& cell(int, int) const;
-    QRect cellRect(int, int) const;
-    int   cellOffset(int) const;
-    void  loadPuzzleFromFile(QString&& filePath);
+    void loadPuzzleFromFile(QString&& filePath);
 
 protected:
+    // override QWidget events here
     void keyPressEvent(QKeyEvent*) override;
     void mousePressEvent(QMouseEvent*) override;
     void paintEvent(QPaintEvent*) override;
@@ -42,15 +50,17 @@ protected:
 private:
     void reset(bool withRepaint = true);
     void selectCell(int, int);
-    void moveSelection(int);
-    void setSelectedCellValue(int);
+    void moveSelection(Direction);
+    void setSelectedCellValue(int8_t);
     int  getCellFromPos(int) const;
     void puzzleLoadError(QString&&);
 
 private:
-    std::array<int,  9>  m_cell_offsets;
+    BoardGeometry* m_geo;
+    InputMode m_mode;
+
     std::array<Cell, 81> m_cells;
-    int m_cell_selected;
+    int8_t m_cell_selected;
 };
 
 #endif // BOARD_H

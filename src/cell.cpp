@@ -12,7 +12,7 @@ Cell::Cell()
 
 Cell::~Cell() {}
 
-char Cell::value() const
+int8_t Cell::value() const
 {
     return m_value;
 }
@@ -30,11 +30,14 @@ bool Cell::isGiven() const
 void Cell::clear()
 {
     m_value = -1;
+    m_cnr_marks.fill(-1);
+    m_ctr_marks.fill(-1);
+
     m_selected = false;
     m_given = false;
 }
 
-void Cell::setValue(char value)
+void Cell::setValue(int8_t value)
 {
     m_value = value;
 }
