@@ -22,8 +22,3 @@ MainView::MainView(QWidget *parent)
 }
 
 MainView::~MainView() {}
-
-void MainView::loadPuzzleFromFile(QString&& filePath)
-{
-    m_board->loadPuzzleFromFile(std::move(filePath));
-}

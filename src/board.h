@@ -39,7 +39,6 @@ public:
 
     void setInputMode(InputMode);
     const Cell& cell(int, int) const;
-    void loadPuzzleFromFile(QString&& filePath);
 
 protected:
     // override QWidget events here
@@ -53,7 +52,6 @@ private:
     void moveSelection(Direction);
     void setSelectedCellValue(int8_t);
     int  getCellFromPos(int) const;
-    void puzzleLoadError(QString&&);
 
 private:
     BoardGeometry* m_geo;
