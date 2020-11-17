@@ -216,10 +216,10 @@ void Board::keyPressEvent(QKeyEvent* event)
 
     if (key >= Qt::Key_0 && key <= Qt::Key_9)
         setSelectedCellValue(key - Qt::Key_0);
+    else if (key == Qt::Key_Backspace)
+        setSelectedCellValue(-1);
     else if (isNavigationKey(key))
         moveSelection(keyToDirection(key));
-
-    // FIXME: add backspace handling
 }
 
 void Board::mousePressEvent(QMouseEvent* event)
