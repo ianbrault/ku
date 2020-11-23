@@ -1,6 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include "board_types.h"
 #include "cell.h"
 
 #include <array>
@@ -14,24 +15,6 @@ class BoardGeometry;
 class Board : public QWidget
 {
     Q_OBJECT
-
-public:
-    enum InputMode {
-        Normal,
-        Corner,
-        Center,
-    };
-    Q_ENUM(InputMode);
-
-    enum Direction {
-        None,
-        Up,
-        Down,
-        Left,
-        Right,
-    };
-    Q_ENUM(Direction);
-    Direction keyToDirection(int);
 
 public:
     Board(QWidget* parent = nullptr);
@@ -50,8 +33,6 @@ private:
     void reset(bool withRepaint = true);
     void selectCell(int, int);
     void moveSelection(Direction);
-    void setSelectedCellValue(int8_t);
-    int  getCellFromPos(int) const;
 
 private:
     BoardGeometry* m_geo;

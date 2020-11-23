@@ -8,6 +8,7 @@ HEADERS += \
     src/board.h \
     src/board_geometry.h \
     src/board_painter.h \
+    src/board_types.h \
     src/cell.h \
     src/main_view.h \
     src/main_window.h \

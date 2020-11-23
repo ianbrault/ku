@@ -21,8 +21,9 @@ public:
 
 private:
     void paintGridLines();
-    void paintCell(int, int, const Cell&);
     void paintCells();
+    void paintCell(int, int, const Cell&);
+    void paintCellMarks(int row, int col, const Cell& cell);
 
 private:
     BoardGeometry* m_geo;
@@ -34,4 +35,5 @@ private:
     QPen m_pen_text_given;
 
     QFont m_font_number;
+    QFont m_font_mark;
 };

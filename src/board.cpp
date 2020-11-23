@@ -9,12 +9,13 @@
 
 #include <cctype>
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QTextStream>
 
 Board::Board(QWidget *parent)
-    : QWidget(parent), m_mode(Normal), m_cell_selected(-1)
+    : QWidget(parent), m_mode(InputMode::Normal), m_cell_selected(-1)
 {
     // FIXME: this should share the same instance with the BoardPainter
     m_geo = new BoardGeometry();
@@ -42,11 +43,15 @@ void Board::reset(bool withRepaint)
 {
     // clear all cells and selection
     for (auto& cell : m_cells)
+    {
         cell.clear();
+    }
     m_cell_selected = -1;
 
     if (withRepaint)
+    {
         repaint();
+    }
 }
 
 void Board::selectCell(int row, int col)
@@ -61,7 +66,9 @@ void Board::selectCell(int row, int col)
     else
     {
         if (m_cell_selected >= 0)
+        {
             m_cells[m_cell_selected].toggleSelect();
+        }
         m_cell_selected = target;
     }
 }
@@ -69,7 +76,9 @@ void Board::selectCell(int row, int col)
 void Board::moveSelection(Direction dir)
 {
     if (m_cell_selected < 0)
+    {
         return;
+    }
 
     auto row = m_cell_selected / 9;
     auto col = m_cell_selected % 9;
@@ -97,17 +106,12 @@ void Board::moveSelection(Direction dir)
     if (newRow != row || newCol != col)
     {
         selectCell(newRow, newCol);
-        repaint();
     }
 }
 
-void Board::setSelectedCellValue(int8_t value)
+static bool isCellKey(int key)
 {
-    if (m_cell_selected >= 0 && !m_cells[m_cell_selected].isGiven())
-    {
-        m_cells[m_cell_selected].setValue(value);
-        repaint();
-    }
+    return (key >= Qt::Key_0 && key <= Qt::Key_9) || key == Qt::Key_Backspace;
 }
 
 static bool isNavigationKey(int key)
@@ -122,32 +126,33 @@ static bool isNavigationKey(int key)
             key == Qt::Key_L);
 }
 
-Board::Direction Board::keyToDirection(int key)
-{
-    auto dir = None;
-
-    if (key == Qt::Key_Up || key == Qt::Key_K)
-        dir = Up;
-    else if (key == Qt::Key_Down || key == Qt::Key_J)
-        dir = Down;
-    else if (key == Qt::Key_Left || key == Qt::Key_H)
-        dir = Left;
-    else if (key == Qt::Key_Right || key == Qt::Key_L)
-        dir = Right;
-
-    return dir;
-}
-
 void Board::keyPressEvent(QKeyEvent* event)
 {
     auto key = event->key();
+    bool paint = false;
 
-    if (key >= Qt::Key_0 && key <= Qt::Key_9)
-        setSelectedCellValue(key - Qt::Key_0);
-    else if (key == Qt::Key_Backspace)
-        setSelectedCellValue(-1);
+    if (isCellKey(key))
+    {
+        // send key event to selected cell(s)
+        if (m_cell_selected >= 0)
+        {
+            // FIXME: should Cell::onKeyPress return whether to repaint?
+            m_cells[m_cell_selected].onKeyPress(m_mode, key);
+            paint = true;
+        }
+    }
     else if (isNavigationKey(key))
+    {
+        auto dir = keyToDirection(key);
+        qDebug() << "move selection" << dir;
         moveSelection(keyToDirection(key));
+        paint = true;
+    }
+
+    if (paint)
+    {
+        repaint();
+    }
 }
 
 void Board::mousePressEvent(QMouseEvent* event)

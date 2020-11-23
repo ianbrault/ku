@@ -7,6 +7,8 @@
 #include "board_painter.h"
 #include "palette.h"
 
+#include <QDebug>
+
 typedef BoardGeometry::Size Size;
 
 BoardPainter::BoardPainter(Board* board)
@@ -22,6 +24,7 @@ BoardPainter::BoardPainter(Board* board)
     m_pen_text_given = QPen(Black);
 
     m_font_number.setPixelSize(Size::NumberSize);
+    m_font_mark.setPixelSize(Size::MarkSize);
 }
 
 BoardPainter::~BoardPainter() {}
@@ -65,20 +68,74 @@ void BoardPainter::paintGridLines()
     drawLine(Size::BoardSize, Size::LineMajorOffset, 0, Size::LineMajorOffset);
 }
 
+void BoardPainter::paintCellMarks(int row, int col, const Cell& cell)
+{
+    // givens should never have marks
+    if (cell.isGiven())
+    {
+        return;
+    }
+
+    std::array<int8_t, 4> buf;
+
+    //
+    // paint center marks
+    //
+
+    cell.centerMarks(buf);
+    // put marks into a single QString
+    QString center_str;
+    for (const auto& n : buf)
+    {
+        if (n >= 0)
+        {
+            center_str += QString::number(n);
+        }
+    }
+    setPen(m_pen_text);
+    drawText(m_geo->cellRect(row, col), Qt::AlignCenter, center_str);
+
+    //
+    // paint corner marks
+    //
+
+    cell.cornerMarks(buf);
+    setPen(m_pen_text);
+    for (auto i = 0; i < 4; i++)
+    {
+        if (buf[i] < 0)
+        {
+            break;
+        }
+        auto str = QString::number(buf[i]);
+        auto irow = 2 * (i / 2);
+        auto icol = 2 * (i % 2);
+
+        drawText(m_geo->cellInnerRect(row, col, irow, icol), Qt::AlignCenter, str);
+    }
+}
+
 void BoardPainter::paintCell(int row, int col, const Cell& cell)
 {
-    auto rect = m_geo->cellRect(row, col);
+    auto cell_rect = m_geo->cellRect(row, col);
 
     // highlight cell
     if (cell.isSelected())
-        fillRect(rect, Yellow);
+    {
+        fillRect(cell_rect, Yellow);
+    }
 
-    // draw cell number
+    // draw cell number if set
     if (cell.value() >= 0)
     {
         setFont(m_font_number);
         setPen(cell.isGiven() ? m_pen_text_given : m_pen_text);
-        drawText(rect, Qt::AlignCenter, QString::number(cell.value()));
+        drawText(cell_rect, Qt::AlignCenter, QString::number(cell.value()));
+    }
+    // otherwise, draw marks
+    else
+    {
+        paintCellMarks(row, col, cell);
     }
 }
 
@@ -87,6 +144,10 @@ void BoardPainter::paintCells()
     auto board = (Board*) device();
 
     for (auto row = 0; row < 9; row++)
+    {
         for (auto col = 0; col < 9; col++)
+        {
             paintCell(row, col, board->cell(row, col));
+        }
+    }
 }
