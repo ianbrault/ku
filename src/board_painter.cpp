@@ -14,8 +14,7 @@ typedef BoardGeometry::Size Size;
 BoardPainter::BoardPainter(Board* board)
     : QPainter((QPaintDevice*) board)
 {
-    // FIXME: this should share the same instance with the Board
-    m_geo = new BoardGeometry();
+    m_geo = getBoardGeometry();
 
     m_pen_line_min = QPen(QBrush(Black), Size::LineMinorWidth);
     m_pen_line_maj = QPen(QBrush(Black), Size::LineMajorWidth);

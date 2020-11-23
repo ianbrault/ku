@@ -26,7 +26,7 @@ private:
     void paintCellMarks(int row, int col, const Cell& cell);
 
 private:
-    BoardGeometry* m_geo;
+    std::shared_ptr<BoardGeometry> m_geo;
 
     QPen m_pen_line_min;
     QPen m_pen_line_maj;

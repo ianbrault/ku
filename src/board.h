@@ -35,7 +35,7 @@ private:
     void moveSelection(Direction);
 
 private:
-    BoardGeometry* m_geo;
+    std::shared_ptr<BoardGeometry> m_geo;
     InputMode m_mode;
 
     std::array<Cell, 81> m_cells;

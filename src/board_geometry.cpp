@@ -6,6 +6,12 @@
 
 #include <QDebug>
 
+static const auto board_geo = std::make_shared<BoardGeometry>();
+std::shared_ptr<BoardGeometry> getBoardGeometry()
+{
+    return board_geo;
+}
+
 BoardGeometry::BoardGeometry()
 {
     // calculate cell offsets

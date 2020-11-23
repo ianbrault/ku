@@ -17,17 +17,13 @@
 Board::Board(QWidget *parent)
     : QWidget(parent), m_mode(InputMode::Normal), m_cell_selected(-1)
 {
-    // FIXME: this should share the same instance with the BoardPainter
-    m_geo = new BoardGeometry();
+    m_geo = getBoardGeometry();
 
     setFixedSize(m_geo->boardSize());
     grabKeyboard();
 }
 
-Board::~Board()
-{
-    delete m_geo;
-}
+Board::~Board() {}
 
 void Board::setInputMode(InputMode mode)
 {
@@ -143,8 +139,6 @@ void Board::keyPressEvent(QKeyEvent* event)
     }
     else if (isNavigationKey(key))
     {
-        auto dir = keyToDirection(key);
-        qDebug() << "move selection" << dir;
         moveSelection(keyToDirection(key));
         paint = true;
     }

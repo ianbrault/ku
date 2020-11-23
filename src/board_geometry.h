@@ -37,4 +37,6 @@ private:
     std::array<uint32_t, 3> m_cell_inner_offsets;
 };
 
+std::shared_ptr<BoardGeometry> getBoardGeometry();
+
 #endif
