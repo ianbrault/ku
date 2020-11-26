@@ -5,7 +5,7 @@
 #include "board.h"
 #include "board_geometry.h"
 #include "board_painter.h"
-#include "palette.h"
+#include "../palette.h"
 
 #include <QDebug>
 
@@ -77,6 +77,9 @@ void BoardPainter::paintCellMarks(int row, int col, const Cell& cell)
 
     std::array<int8_t, 4> buf;
 
+    setPen(m_pen_text);
+    setFont(m_font_mark);
+
     //
     // paint center marks
     //
@@ -91,7 +94,6 @@ void BoardPainter::paintCellMarks(int row, int col, const Cell& cell)
             center_str += QString::number(n);
         }
     }
-    setPen(m_pen_text);
     drawText(m_geo->cellRect(row, col), Qt::AlignCenter, center_str);
 
     //
@@ -99,7 +101,6 @@ void BoardPainter::paintCellMarks(int row, int col, const Cell& cell)
     //
 
     cell.cornerMarks(buf);
-    setPen(m_pen_text);
     for (auto i = 0; i < 4; i++)
     {
         if (buf[i] < 0)

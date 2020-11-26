@@ -20,7 +20,6 @@ public:
     Board(QWidget* parent = nullptr);
     ~Board();
 
-    void setInputMode(InputMode);
     const Cell& cell(int, int) const;
 
 protected:
@@ -33,6 +32,9 @@ private:
     void reset(bool withRepaint = true);
     void selectCell(int, int);
     void moveSelection(Direction);
+
+public slots:
+    void setInputMode(InputMode);
 
 private:
     std::shared_ptr<BoardGeometry> m_geo;

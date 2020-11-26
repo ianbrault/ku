@@ -10,4 +10,6 @@ const QColor LightGray  (232, 232, 236, 255);
 const QColor Yellow     (255, 214,  10,  64);
 const QColor Blue       (  0, 122, 255, 255);
 
+const QString BlackStr("rgb(28,28,30)");
+
 #endif // PALETTE_H

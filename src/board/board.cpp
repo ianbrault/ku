@@ -5,7 +5,7 @@
 #include "board.h"
 #include "board_geometry.h"
 #include "board_painter.h"
-#include "palette.h"
+#include "../palette.h"
 
 #include <cctype>
 
@@ -107,7 +107,7 @@ void Board::moveSelection(Direction dir)
 
 static bool isCellKey(int key)
 {
-    return (key >= Qt::Key_0 && key <= Qt::Key_9) || key == Qt::Key_Backspace;
+    return (key > Qt::Key_0 && key <= Qt::Key_9) || key == Qt::Key_Backspace;
 }
 
 static bool isNavigationKey(int key)
