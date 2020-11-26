@@ -37,6 +37,6 @@ void MainView::setupLayout()
     layout->addLayout(gutter);
 
     layout->setAlignment(Qt::AlignCenter);
-    layout->setContentsMargins(40, 16, 40, 40);
+    layout->setContentsMargins(40, 40, 40, 40);
     setLayout(layout);
 }

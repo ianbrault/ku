@@ -25,11 +25,6 @@ SOURCES += \
     src/main_view.cpp \
     src/main_window.cpp
 
-macx {
-    HEADERS += src/osx_manager.h
-    SOURCES += src/osx_manager.mm
-}
-
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
