@@ -1,5 +1,5 @@
-#ifndef BOARD_TYPES_H
-#define BOARD_TYPES_H
+#ifndef TYPES_H
+#define TYPES_H
 
 #include <Qt>
 #include <QDebug>
@@ -9,6 +9,7 @@ enum InputMode
     Normal,
     Corner,
     Center,
+    InputModeMax,
 };
 
 inline QString inputModeToString(InputMode m)
@@ -41,6 +42,7 @@ enum Direction
     Down,
     Left,
     Right,
+    DirectionMax,
 };
 
 inline Direction keyToDirection(int key)
@@ -68,4 +70,4 @@ inline Direction keyToDirection(int key)
     return dir;
 }
 
-#endif // BOARD_TYPES_H
+#endif // TYPES_H

@@ -1,7 +1,7 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include "board_types.h"
+#include "../types.h"
 
 #include <array>
 #include <cstdint>

@@ -5,6 +5,7 @@
 #include "board.h"
 #include "board_geometry.h"
 #include "board_painter.h"
+#include "../main_view.h"
 #include "../styles.h"
 
 #include <cctype>
@@ -14,13 +15,20 @@
 #include <QMouseEvent>
 #include <QTextStream>
 
-Board::Board(QWidget *parent)
-    : QWidget(parent), m_mode(InputMode::Normal), m_cell_selected(-1)
+Board::Board(MainView* parent)
+    : Widget(), m_mode(InputMode::Normal), m_cell_selected(-1)
 {
     m_geo = getBoardGeometry();
 
+    // register keys
+    parent->registerKeys(this, {
+        Qt::Key_1, Qt::Key_2, Qt::Key_3, Qt::Key_4, Qt::Key_5, Qt::Key_6, Qt::Key_7, Qt::Key_8, Qt::Key_9,
+        Qt::Key_Backspace, Qt::Key_Up, Qt::Key_Down, Qt::Key_Left, Qt::Key_Right,
+        // Vim-style keybindings, might want to hide these behind a flag
+        Qt::Key_H, Qt::Key_J, Qt::Key_K, Qt::Key_L,
+    });
+
     setFixedSize(m_geo->boardSize());
-    grabKeyboard();
 }
 
 Board::~Board() {}
@@ -123,7 +131,7 @@ static bool isNavigationKey(int key)
             key == Qt::Key_L);
 }
 
-void Board::keyPressEvent(QKeyEvent* event)
+void Board::onKeyEvent(QKeyEvent* event)
 {
     auto key = event->key();
     bool paint = false;

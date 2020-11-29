@@ -1,30 +1,31 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include "board_types.h"
 #include "cell.h"
+#include "../types.h"
+#include "../widget.h"
 
 #include <array>
 
 #include <QFont>
 #include <QPen>
-#include <QWidget>
 
 class BoardGeometry;
+class MainView;
 
-class Board : public QWidget
+class Board : public Widget
 {
     Q_OBJECT
 
 public:
-    Board(QWidget* parent = nullptr);
+    Board(MainView*);
     ~Board();
 
     const Cell& cell(int, int) const;
 
 protected:
     // override QWidget events here
-    void keyPressEvent(QKeyEvent*) override;
+    void onKeyEvent(QKeyEvent*) override;
     void mousePressEvent(QMouseEvent*) override;
     void paintEvent(QPaintEvent*) override;
 

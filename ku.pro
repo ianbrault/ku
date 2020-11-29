@@ -9,14 +9,15 @@ HEADERS += \
     src/board/board.h \
     src/board/board_geometry.h \
     src/board/board_painter.h \
-    src/board/board_types.h \
     src/board/cell.h \
     src/divider.h \
     src/icon.h \
     src/input_mode_selector.h \
     src/main_view.h \
     src/main_window.h \
-    src/styles.h
+    src/styles.h \
+    src/types.h \
+    src/widget.h
 
 SOURCES += \
     src/board/board.cpp \
