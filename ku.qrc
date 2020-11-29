@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file alias="pencil.svg">assets/pencil.svg</file>
+</qresource>
+</RCC>

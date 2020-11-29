@@ -3,6 +3,7 @@
 */
 
 #include "board/board.h"
+#include "divider.h"
 #include "input_mode_selector.h"
 #include "main_view.h"
 
@@ -31,12 +32,13 @@ void MainView::setupLayout()
     // the gutter contains the control panels to the right of the board
     auto gutter = new QVBoxLayout();
     gutter->addWidget(m_mode_selector);
+    gutter->addWidget(new Divider());
     gutter->addStretch();
 
     layout->addSpacing(16);
     layout->addLayout(gutter);
 
     layout->setAlignment(Qt::AlignCenter);
-    layout->setContentsMargins(40, 40, 40, 40);
+    layout->setContentsMargins(50, 50, 32, 50);
     setLayout(layout);
 }

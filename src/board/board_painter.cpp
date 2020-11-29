@@ -5,7 +5,7 @@
 #include "board.h"
 #include "board_geometry.h"
 #include "board_painter.h"
-#include "../palette.h"
+#include "../styles.h"
 
 #include <QDebug>
 

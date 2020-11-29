@@ -118,6 +118,7 @@ void Cell::onKeyPress(InputMode mode, int key)
             // otherwise, add it
             qDebug().nospace() << "Cell::onKeyPress: add cell mark " << value << " (mode=" << mode << ")";
             marks->insert(value);
+            // FIXME: if a mark is added and the value is set, it should be cleared
         }
     }
 }

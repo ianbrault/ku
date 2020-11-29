@@ -5,7 +5,7 @@
 #include "board.h"
 #include "board_geometry.h"
 #include "board_painter.h"
-#include "../palette.h"
+#include "../styles.h"
 
 #include <cctype>
 
@@ -28,6 +28,7 @@ Board::~Board() {}
 void Board::setInputMode(InputMode mode)
 {
     m_mode = mode;
+    qDebug().noquote() << "Board::setInputMode: set input mode" << inputModeToString(mode);
 }
 
 const Cell& Board::cell(int row, int col) const

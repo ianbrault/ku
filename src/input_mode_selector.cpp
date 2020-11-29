@@ -2,48 +2,68 @@
 ** src/input_mode_selector.cpp
 */
 
+#include "icon.h"
 #include "input_mode_selector.h"
-#include "palette.h"
+#include "styles.h"
 
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QRadioButton>
 #include <QVBoxLayout>
 
 InputModeSelector::InputModeSelector(QWidget* parent)
-    : QFrame(parent)
+    : QWidget(parent)
 {
-    setStyleSheet(
-        QString("QFrame{border:1px solid %1} QFrame>*{border:none;color:%1}")
-            .arg(BlackStr));
-
-    auto layout = new QVBoxLayout();
-
-    auto title = new QLabel("Input Mode");
-    // TODO: style the title
-
-    auto radio_normal = new QRadioButton("Normal");
-    auto radio_corner = new QRadioButton("Corner");
-    auto radio_center = new QRadioButton("Center");
+    // add spacing to the left of the text
+    m_radio_input_mode_normal = new QRadioButton(" Normal");
+    m_radio_input_mode_corner = new QRadioButton(" Corner");
+    m_radio_input_mode_center = new QRadioButton(" Center");
 
     // InputMode::Normal by default
-    radio_normal->setChecked(true);
+    m_radio_input_mode_normal->setChecked(true);
 
     // set up signals
-    connect(radio_normal, &QRadioButton::pressed, this, [&](){
+    connect(m_radio_input_mode_normal, &QRadioButton::pressed, this, [&](){
         emit inputModeChanged(InputMode::Normal);
     });
-    connect(radio_corner, &QRadioButton::pressed, this, [&](){
+    connect(m_radio_input_mode_corner, &QRadioButton::pressed, this, [&](){
         emit inputModeChanged(InputMode::Corner);
     });
-    connect(radio_center, &QRadioButton::pressed, this, [&](){
+    connect(m_radio_input_mode_center, &QRadioButton::pressed, this, [&](){
         emit inputModeChanged(InputMode::Center);
     });
 
-    layout->addWidget(title);
-    layout->addWidget(radio_normal);
-    layout->addWidget(radio_corner);
-    layout->addWidget(radio_center);
-    setLayout(layout);
+    setupLayout();
 }
 
 InputModeSelector::~InputModeSelector() {}
+
+void InputModeSelector::setupLayout()
+{
+    auto layout = new QVBoxLayout();
+    layout->setSpacing(8);
+
+    QFont sidebarTitleFont;
+    sidebarTitleFont.setPointSize(16);
+    sidebarTitleFont.setWeight(QFont::Medium);
+
+    auto titleText = new QLabel("Input Mode");
+    titleText->setFont(sidebarTitleFont);
+
+    auto titleIcon = new Icon(":/pencil.svg", 18);
+
+    auto titleRow = new QHBoxLayout();
+    titleRow->addWidget(titleText);
+    titleRow->addStretch();
+    titleRow->addWidget(titleIcon);
+    titleRow->setAlignment(Qt::AlignCenter);
+    titleRow->setMargin(0);
+
+    layout->addLayout(titleRow);
+    layout->addWidget(m_radio_input_mode_normal);
+    layout->addWidget(m_radio_input_mode_corner);
+    layout->addWidget(m_radio_input_mode_center);
+
+    setLayout(layout);
+    setFixedWidth(150);
+}

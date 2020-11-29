@@ -1,8 +1,9 @@
 # ku.pro
 
-QT      += core gui widgets
-CONFIG  += c++17
-DEFINES += QT_DEPRECATED_WARNINGS
+QT       += core gui widgets
+CONFIG   += c++17
+DEFINES  += QT_DEPRECATED_WARNINGS
+RESOURCES = ku.qrc
 
 HEADERS += \
     src/board/board.h \
@@ -10,16 +11,20 @@ HEADERS += \
     src/board/board_painter.h \
     src/board/board_types.h \
     src/board/cell.h \
+    src/divider.h \
+    src/icon.h \
     src/input_mode_selector.h \
     src/main_view.h \
     src/main_window.h \
-    src/palette.h
+    src/styles.h
 
 SOURCES += \
     src/board/board.cpp \
     src/board/board_geometry.cpp \
     src/board/board_painter.cpp \
     src/board/cell.cpp \
+    src/divider.cpp \
+    src/icon.cpp \
     src/input_mode_selector.cpp \
     src/main.cpp \
     src/main_view.cpp \

@@ -11,6 +11,29 @@ enum InputMode
     Center,
 };
 
+inline QString inputModeToString(InputMode m)
+{
+    QString s;
+
+    switch (m)
+    {
+    case InputMode::Normal:
+        s = QString("Normal");
+        break;
+    case InputMode::Corner:
+        s = QString("Corner");
+        break;
+    case InputMode::Center:
+        s = QString("Center");
+        break;
+    default:
+        // unreachable
+        assert(0);
+    }
+
+    return s;
+}
+
 enum Direction
 {
     None,
