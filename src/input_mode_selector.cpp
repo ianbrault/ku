@@ -15,7 +15,7 @@
 
 InputModeSelector::InputModeSelector(MainView* parent)
     : Widget()
-{            
+{
     // add spacing to the left of the text
     m_radio_input_mode_normal = new QRadioButton(" Normal");
     m_radio_input_mode_corner = new QRadioButton(" Corner");
